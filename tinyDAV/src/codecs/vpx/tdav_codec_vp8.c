@@ -184,6 +184,19 @@ static int tdav_codec_vp8_set(tmedia_codec_t* self, const tmedia_param_t* param)
 				reconf = tsk_true;
 			}
 		}
+        else if(tsk_striequals(param->key, "resize")){
+            // value: 320x240, structured as (320 << 16) + 240.
+            int32_t value = *((int32_t*)param->value);
+            int32_t width = (value >> 16) & 0xFFFF;
+            int32_t height = value & 0xFFFF;
+            if (vp8->encoder.cfg.g_w != width || vp8->encoder.cfg.g_h != height) {
+				vp8->encoder.cfg.g_w = width;
+				vp8->encoder.cfg.g_h = height;
+                TMEDIA_CODEC_VIDEO(vp8)->out.width = width;
+                TMEDIA_CODEC_VIDEO(vp8)->out.height = height;
+				reconf = tsk_true;
+            }
+        }
 	}
 
 	if (reconf) {

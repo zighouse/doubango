@@ -776,6 +776,7 @@ static int _tdav_session_video_set_defaults(tdav_session_video_t* self)
     }
     self->jb_enabled = tmedia_defaults_get_videojb_enabled();
     self->zero_artifacts = tmedia_defaults_get_video_zeroartifacts_enabled();
+    self->size_follow = tmedia_defaults_get_video_sizefollow_enabled();
     self->avpf.max = tmedia_defaults_get_avpf_tail_min();
     self->encoder.pkt_loss_level = tdav_session_video_pkt_loss_level_low;
     self->encoder.pkt_loss_prob_bad = 0; // honor first report
