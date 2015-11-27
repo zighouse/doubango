@@ -58,6 +58,20 @@ static int tdav_codec_h264_get_nalunit_pay(const uint8_t* in_data, tsk_size_t in
 int tdav_codec_h264_parse_profile(const char* profile_level_id, profile_idc_t *p_idc, profile_iop_t *p_iop, level_idc_t *l_idc)
 {
 	uint32_t value;
+    // {{{ fix for asterisk, -- xiezhigang, 2015-06-29
+    char conalical_profile_level_id[7];
+    if (tsk_strlen(profile_level_id) == 5) {
+        conalical_profile_level_id[0] = profile_level_id[0];
+        conalical_profile_level_id[1] = profile_level_id[1];
+        conalical_profile_level_id[2] = profile_level_id[2];
+        conalical_profile_level_id[3] = profile_level_id[3];
+        conalical_profile_level_id[4] = '0';
+        conalical_profile_level_id[5] = profile_level_id[4];
+        conalical_profile_level_id[6] = '\0';
+        TSK_DEBUG_INFO("fix profile_level_id from %s to %s.", profile_level_id, conalical_profile_level_id);
+        profile_level_id = conalical_profile_level_id;
+    }
+    // }}}
 
 	if(tsk_strlen(profile_level_id) != 6){
 		TSK_DEBUG_ERROR("I say [%s] is an invalid profile-level-id", profile_level_id);

@@ -183,12 +183,18 @@ static int tdav_codec_h264_common_size_from_fs(unsigned maxFS, unsigned *width, 
 
 static int tdav_codec_h264_common_level_from_size(unsigned width, unsigned height, level_idc_t *level)
 {
-	tsk_size_t i;
-	unsigned maxFS = (((width + 15) >> 4) * ((height + 15) >> 4));
+	tsk_size_t i, levelIndex;
+    unsigned frameSize = width * height;
+    unsigned leveledSize = 0;
 	static const tsk_size_t __tdav_codec_h264_common_level_sizes_count = sizeof(tdav_codec_h264_common_level_sizes)/sizeof(tdav_codec_h264_common_level_sizes[0]);
 	for (i = 0; i < __tdav_codec_h264_common_level_sizes_count; ++i){
-		if (/*tdav_codec_h264_common_level_sizes[i].maxFS*/ ((tdav_codec_h264_common_level_sizes[i].width * tdav_codec_h264_common_level_sizes[i].height) >> 8) >= maxFS){
+		if ( tdav_codec_h264_common_level_sizes[i].width * tdav_codec_h264_common_level_sizes[i].height >= frameSize){
+            leveledSize = tdav_codec_h264_common_level_sizes[i].width * tdav_codec_h264_common_level_sizes[i].height;
+            for (; i < __tdav_codec_h264_common_level_sizes_count
+                    && tdav_codec_h264_common_level_sizes[i].width * tdav_codec_h264_common_level_sizes[i].height == leveledSize; ++i) {
 			*level = tdav_codec_h264_common_level_sizes[i].level;
+                levelIndex = i;
+            }
 			return 0;
 		}
 	}
