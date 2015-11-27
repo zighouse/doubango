@@ -271,6 +271,9 @@ static tsk_size_t tdav_codec_h264_encode(tmedia_codec_t* self, const void* in_da
 			TSK_DEBUG_ERROR("Invalid size: %u<>%u", size, in_size);
 			return 0;
 		}
+        h264->encoder.picture->format = PIX_FMT_YUV420P;
+        h264->encoder.picture->width = h264->encoder.context->width;
+        h264->encoder.picture->height = h264->encoder.context->height;
 
 		// send IDR for:
 		//	- the first frame
