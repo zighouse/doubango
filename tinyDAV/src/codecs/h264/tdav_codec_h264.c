@@ -189,6 +189,27 @@ static int tdav_codec_h264_set(tmedia_codec_t* self, const tmedia_param_t* param
 			}
 			return 0;
 		}
+        else if(tsk_striequals(param->key, "resize")){
+            // value: 320x240, structured as (320 << 16) + 240.
+            int32_t value = *((int32_t*)param->value);
+            int32_t width = (value >> 16) & 0xFFFF;
+            int32_t height = value & 0xFFFF;
+            if (h264->encoder.context->width != width || h264->encoder.context->height != height) {
+                if (self->opened){
+                    int ret;
+                    TSK_DEBUG_INFO("resize encoder context: %dx%d --> %dx%d",
+                            h264->encoder.context->width, h264->encoder.context->height, width, height);
+                    TMEDIA_CODEC_VIDEO(h264)->out.width = width;
+                    TMEDIA_CODEC_VIDEO(h264)->out.height = height;
+					if((ret = tdav_codec_h264_close_encoder(h264, h264->encoder.rotation))){
+						return ret;
+					}
+					if((ret = tdav_codec_h264_open_encoder(h264))){
+						return ret;
+					}
+                }
+            }
+        }
 	}
 	return -1;
 }

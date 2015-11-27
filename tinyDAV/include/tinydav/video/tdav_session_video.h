@@ -50,6 +50,7 @@ typedef struct tdav_session_video_s
 	struct tdav_video_jb_s* jb;
 	tsk_bool_t jb_enabled;
 	tsk_bool_t zero_artifacts;
+    tsk_bool_t size_follow;
 	tsk_bool_t fps_changed;
 	tsk_bool_t started;
 

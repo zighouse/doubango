@@ -438,6 +438,21 @@ static int tdav_session_video_producer_enc_cb(const void* callback_data, const v
                 video->conv.xProducerSize = size;
                 
                 TSK_DEBUG_INFO("producer size = (%d, %d)", (int)base->producer->video.width, (int)base->producer->video.height);
+                //{{{ try change encoder context's size.
+                if (video->size_follow) {
+                    int32_t value = (base->producer->video.width << 16) | base->producer->video.height;
+                    tmedia_param_t *media_param = tmedia_param_create(tmedia_pat_set,
+                            tmedia_video,
+                            tmedia_ppt_codec,
+                            tmedia_pvt_int32,
+                            "resize",
+                            (void*)&value);
+                    if(media_param) {
+                        tmedia_codec_set(video->encoder.codec, media_param);
+                        TSK_OBJECT_SAFE_FREE(media_param);
+                    }
+                }
+                //}}}
                 if (!(video->conv.toYUV420 = tmedia_converter_video_create(base->producer->video.width, base->producer->video.height, base->producer->video.chroma, TMEDIA_CODEC_VIDEO(codec_encoder)->out.width, TMEDIA_CODEC_VIDEO(codec_encoder)->out.height,
                                                                            TMEDIA_CODEC_VIDEO(codec_encoder)->out.chroma))){
                     TSK_DEBUG_ERROR("Failed to create video converter");
