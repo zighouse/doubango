@@ -472,8 +472,8 @@ int tdav_codec_mp4ves_open_encoder(tdav_codec_mp4ves_t* self)
 		TSK_DEBUG_ERROR("Encoder already opened");
 		return -1;
 	}
-	self->encoder.context = avcodec_alloc_context();
-	avcodec_get_context_defaults(self->encoder.context);
+	self->encoder.context = avcodec_alloc_context3(NULL);
+	avcodec_get_context_defaults3(self->encoder.context, NULL);
 	
 	self->encoder.context->pix_fmt		= PIX_FMT_YUV420P;
 	self->encoder.context->time_base.num  = 1;
@@ -514,7 +514,7 @@ int tdav_codec_mp4ves_open_encoder(tdav_codec_mp4ves_t* self)
 	}
 	
 	// Open encoder
-	if((ret = avcodec_open(self->encoder.context, self->encoder.codec)) < 0){
+	if((ret = avcodec_open2(self->encoder.context, self->encoder.codec, NULL)) < 0){
 		TSK_DEBUG_ERROR("Failed to open MP4V-ES encoder");
 		return ret;
 	}
@@ -538,8 +538,8 @@ int tdav_codec_mp4ves_open_decoder(tdav_codec_mp4ves_t* self)
 		return -1;
 	}
 
-	self->decoder.context = avcodec_alloc_context();
-	avcodec_get_context_defaults(self->decoder.context);
+	self->decoder.context = avcodec_alloc_context3(NULL);
+	avcodec_get_context_defaults3(self->decoder.context, NULL);
 	
 	self->decoder.context->pix_fmt = PIX_FMT_YUV420P;
 	self->decoder.context->width = TMEDIA_CODEC_VIDEO(self)->out.width;
@@ -564,7 +564,7 @@ int tdav_codec_mp4ves_open_decoder(tdav_codec_mp4ves_t* self)
 	}
 
 	// Open decoder
-	if((ret = avcodec_open(self->decoder.context, self->decoder.codec)) < 0){
+	if((ret = avcodec_open2(self->decoder.context, self->decoder.codec, NULL)) < 0){
 		TSK_DEBUG_ERROR("Failed to open MP4V-ES decoder");
 		return ret;
 	}

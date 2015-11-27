@@ -179,7 +179,7 @@ static int tdav_codec_h264_set(tmedia_codec_t* self, const tmedia_param_t* param
 					}
 					h264->encoder.context->width = (rotation == 90 || rotation == 270) ? TMEDIA_CODEC_VIDEO(h264)->out.height : TMEDIA_CODEC_VIDEO(h264)->out.width;
 					h264->encoder.context->height = (rotation == 90 || rotation == 270) ? TMEDIA_CODEC_VIDEO(h264)->out.width : TMEDIA_CODEC_VIDEO(h264)->out.height;
-					if((ret = avcodec_open(h264->encoder.context, h264->encoder.codec)) < 0){
+					if((ret = avcodec_open2(h264->encoder.context, h264->encoder.codec, NULL)) < 0){
 						TSK_DEBUG_ERROR("Failed to open [%s] codec", TMEDIA_CODEC(h264)->plugin->desc);
 						return ret;
 					}
@@ -715,8 +715,8 @@ int tdav_codec_h264_open_encoder(tdav_codec_h264_t* self)
         avcodec_get_context_defaults3(self->encoder.context, self->encoder.codec);
     }
 #else
-    if((self->encoder.context = avcodec_alloc_context())){
-        avcodec_get_context_defaults(self->encoder.context);
+    if((self->encoder.context = avcodec_alloc_context3(NULL))){
+        avcodec_get_context_defaults3(self->encoder.context, NULL);
     }
 #endif
     
@@ -824,7 +824,7 @@ int tdav_codec_h264_open_encoder(tdav_codec_h264_t* self)
 	}
 
 	// Open encoder
-	if((ret = avcodec_open(self->encoder.context, self->encoder.codec)) < 0){
+	if((ret = avcodec_open2(self->encoder.context, self->encoder.codec, NULL)) < 0){
 		TSK_DEBUG_ERROR("Failed to open [%s] codec", TMEDIA_CODEC(self)->plugin->desc);
 		return ret;
 	}
@@ -877,8 +877,8 @@ int tdav_codec_h264_open_decoder(tdav_codec_h264_t* self)
 		return -1;
 	}
 
-	self->decoder.context = avcodec_alloc_context();
-	avcodec_get_context_defaults(self->decoder.context);
+	self->decoder.context = avcodec_alloc_context3(NULL);
+	avcodec_get_context_defaults3(self->decoder.context, NULL);
 	
 	self->decoder.context->pix_fmt = PIX_FMT_YUV420P;
 	self->decoder.context->flags2 |= CODEC_FLAG2_FAST;
@@ -893,7 +893,7 @@ int tdav_codec_h264_open_decoder(tdav_codec_h264_t* self)
 	avcodec_get_frame_defaults(self->decoder.picture);
 
 	// Open decoder
-	if((ret = avcodec_open(self->decoder.context, self->decoder.codec)) < 0){
+	if((ret = avcodec_open2(self->decoder.context, self->decoder.codec, NULL)) < 0){
 		TSK_DEBUG_ERROR("Failed to open [%s] codec", TMEDIA_CODEC(self)->plugin->desc);
 		return ret;
 	}

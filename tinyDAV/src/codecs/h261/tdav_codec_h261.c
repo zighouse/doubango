@@ -76,8 +76,8 @@ int tdav_codec_h261_open(tmedia_codec_t* self)
 		TSK_DEBUG_ERROR("Failed to find H.261 encoder");
 		return -2;
 	}
-	h261->encoder.context = avcodec_alloc_context();
-	avcodec_get_context_defaults(h261->encoder.context);
+	h261->encoder.context = avcodec_alloc_context3(NULL);
+	avcodec_get_context_defaults3(h261->encoder.context, NULL);
 	
 	h261->encoder.context->pix_fmt		= PIX_FMT_YUV420P;
 	h261->encoder.context->time_base.num  = 1;
@@ -114,7 +114,7 @@ int tdav_codec_h261_open(tmedia_codec_t* self)
 	}
 	
 	// Open encoder
-	if((ret = avcodec_open(h261->encoder.context, h261->encoder.codec)) < 0){
+	if((ret = avcodec_open2(h261->encoder.context, h261->encoder.codec, NULL)) < 0){
 		TSK_DEBUG_ERROR("Failed to open H.261 encoder");
 		return ret;
 	}
@@ -125,8 +125,8 @@ int tdav_codec_h261_open(tmedia_codec_t* self)
 	if(!(h261->decoder.codec = avcodec_find_decoder(CODEC_ID_H261))){
 		TSK_DEBUG_ERROR("Failed to find H.261 decoder");
 	}
-	h261->decoder.context = avcodec_alloc_context();
-	avcodec_get_context_defaults(h261->decoder.context);
+	h261->decoder.context = avcodec_alloc_context3(NULL);
+	avcodec_get_context_defaults3(h261->decoder.context, NULL);
 	
 	h261->decoder.context->pix_fmt = PIX_FMT_YUV420P;
 	h261->decoder.context->width = TMEDIA_CODEC_VIDEO(h261)->in.width;
@@ -146,7 +146,7 @@ int tdav_codec_h261_open(tmedia_codec_t* self)
 	}
 
 	// Open decoder
-	if((ret = avcodec_open(h261->decoder.context, h261->decoder.codec)) < 0){
+	if((ret = avcodec_open2(h261->decoder.context, h261->decoder.codec, NULL)) < 0){
 		TSK_DEBUG_ERROR("Failed to open H.261 decoder");
 		return ret;
 	}
